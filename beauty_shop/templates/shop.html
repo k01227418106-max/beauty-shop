@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}المتجر - GlamStore{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));padding:2rem;text-align:center;color:#fff">
+  <h1 style="font-size:2rem;font-weight:900">🛍️ تسوقي معنا</h1>
+  <p style="opacity:.8">{{ total }} منتج متاح</p>
+</div>
+
+<div class="shop-layout" style="max-width:1300px;margin:0 auto;">
+  <!-- Sidebar -->
+  <aside class="filter-sidebar">
+    <h3>🔍 البحث</h3>
+    <form method="get" action="{{ url_for('shop') }}" class="search-bar" style="margin-bottom:1.5rem">
+      <input class="form-control" name="search" value="{{ search }}" placeholder="ابحثي عن منتج...">
+      <button type="submit" class="btn btn-primary btn-sm">بحث</button>
+    </form>
+    <h3>📂 الفئات</h3>
+    <ul class="filter-list">
+      <li><a href="{{ url_for('shop') }}" {% if not current_cat %}class="active"{% endif %}>🛍️ الكل</a></li>
+      {% for cat in categories %}
+      <li><a href="{{ url_for('shop',category=cat.id) }}" {% if current_cat|string==cat.id|string %}class="active"{% endif %}>{{ cat.icon }} {{ cat.name_ar }}</a></li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <!-- Products -->
+  <main>
+    <div class="shop-header">
+      <p style="color:var(--muted);font-weight:600">عرض {{ products|length }} من {{ total }} منتج</p>
+      <form method="get" style="display:flex;align-items:center;gap:.5rem">
+        {% if current_cat %}<input type="hidden" name="category" value="{{ current_cat }}">{% endif %}
+        {% if search %}<input type="hidden" name="search" value="{{ search }}">{% endif %}
+        <label style="font-weight:700">ترتيب:</label>
+        <select name="sort" class="sort-select" onchange="this.form.submit()">
+          <option value="newest" {% if sort=='newest' %}selected{% endif %}>الأحدث</option>
+          <option value="price_asc" {% if sort=='price_asc' %}selected{% endif %}>السعر: الأقل أولاً</option>
+          <option value="price_desc" {% if sort=='price_desc' %}selected{% endif %}>السعر: الأعلى أولاً</option>
+          <option value="name" {% if sort=='name' %}selected{% endif %}>الاسم</option>
+        </select>
+      </form>
+    </div>
+
+    {% if products %}
+    <div class="products-grid">
+      {% for p in products %}
+      <div class="product-card">
+        <a href="{{ url_for('product',pid=p.id) }}">
+          <div class="product-img">
+            {% if p.image and p.image != 'default.jpg' %}
+              <img src="{{ url_for('static',filename='uploads/'+p.image) }}" alt="{{ p.name }}">
+            {% else %}
+              <div style="font-size:5rem;display:flex;align-items:center;justify-content:center;height:100%">
+                {% if p.category_id==1 %}💄{% elif p.category_id==2 %}👜{% elif p.category_id==3 %}✨{% else %}🌸{% endif %}
+              </div>
+            {% endif %}
+            {% if p.old_price %}<span class="badge">خصم</span>{% endif %}
+            {% if p.is_new %}<span class="badge badge-new" style="top:40px">جديد</span>{% endif %}
+          </div>
+        </a>
+        <div class="product-body">
+          <div class="product-cat">{{ p.cat_name }}</div>
+          <div class="product-name">{{ p.name }}</div>
+          <div class="price-row">
+            <span class="price">{{ p.price }} جنيه</span>
+            {% if p.old_price %}<span class="old-price">{{ p.old_price }} جنيه</span>{% endif %}
+          </div>
+          <div class="product-actions">
+            {% if session.user_id %}
+            <form action="{{ url_for('add_to_cart',pid=p.id) }}" method="post">
+              <input type="hidden" name="quantity" value="1">
+              <button class="btn btn-primary btn-sm">🛒 للسلة</button>
+            </form>
+            <a href="{{ url_for('toggle_wishlist',pid=p.id) }}" class="wish-btn">❤️</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">🛒 للسلة</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="pagination">
+      {% if page > 1 %}<a href="?page={{ page-1 }}&category={{ current_cat }}&search={{ search }}&sort={{ sort }}">السابق</a>{% endif %}
+      {% for i in range(1, total_pages+1) %}
+        {% if i == page %}<span class="current">{{ i }}</span>
+        {% else %}<a href="?page={{ i }}&category={{ current_cat }}&search={{ search }}&sort={{ sort }}">{{ i }}</a>{% endif %}
+      {% endfor %}
+      {% if page < total_pages %}<a href="?page={{ page+1 }}&category={{ current_cat }}&search={{ search }}&sort={{ sort }}">التالي</a>{% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+      <div class="icon">🔍</div>
+      <h3>لا توجد منتجات</h3>
+      <p>جربي البحث بكلمة مختلفة أو اختاري فئة أخرى</p>
+      <a href="{{ url_for('shop') }}" class="btn btn-primary">عرض الكل</a>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

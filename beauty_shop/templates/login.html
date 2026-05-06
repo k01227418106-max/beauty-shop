@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}تسجيل الدخول - GlamStore{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));padding:3rem 2rem;text-align:center;color:#fff">
+  <h1 style="font-size:2rem;font-weight:900">💄 أهلاً بيكِ</h1>
+  <p style="opacity:.8">سجلي دخولك وابدأي التسوق</p>
+</div>
+<div class="form-page">
+  <div class="form-card">
+    <h2 style="margin-bottom:.5rem">تسجيل الدخول</h2>
+    <p class="form-subtitle">مش عندك حساب؟ <a href="{{ url_for('register') }}" style="color:var(--pink);font-weight:700">سجلي الآن</a></p>
+    <form method="post">
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" name="email" class="form-control" placeholder="example@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;margin-top:.5rem">دخول ←</button>
+    </form>
+    <div style="margin-top:1.5rem;padding:1rem;background:#fdf6fa;border-radius:12px;font-size:.85rem;color:var(--muted);text-align:center">
+      <strong>حساب الأدمن الجديد:</strong> kareem@beauty.com | 01227418106
+    </div>
+  </div>
+</div>
+{% endblock %}

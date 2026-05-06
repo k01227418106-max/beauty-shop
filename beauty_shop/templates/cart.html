@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}سلة الشراء - GlamStore{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));padding:2rem;text-align:center;color:#fff">
+  <h1 style="font-size:2rem;font-weight:900">🛒 سلة الشراء</h1>
+</div>
+<div class="cart-page">
+{% if items %}
+  <table class="cart-table">
+    <thead><tr><th>المنتج</th><th>السعر</th><th>الكمية</th><th>الإجمالي</th><th></th></tr></thead>
+    <tbody>
+    {% for item in items %}
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:1rem">
+          {% if item.image and item.image != 'default.jpg' %}
+            <img src="{{ url_for('static',filename='uploads/'+item.image) }}" class="cart-img" alt="">
+          {% else %}
+            <div class="cart-img" style="background:#fce4f0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2rem">💄</div>
+          {% endif %}
+          <span style="font-weight:700">{{ item.name }}</span>
+        </div>
+      </td>
+      <td><span class="price" style="font-size:1rem">{{ item.price }} جنيه</span></td>
+      <td>
+        <form action="{{ url_for('update_cart') }}" method="post" class="qty-control">
+          <input type="hidden" name="cart_id" value="{{ item.id }}">
+          <button type="submit" name="quantity" value="{{ item.quantity-1 }}" class="btn btn-sm" style="background:#f0e0ea;width:32px;height:32px;padding:0;justify-content:center">-</button>
+          <input type="number" name="quantity" value="{{ item.quantity }}" min="0" class="qty-control" style="width:55px;padding:.3rem;border:2px solid var(--border);border-radius:8px;text-align:center;font-family:'Cairo',sans-serif" onchange="this.form.submit()">
+          <button type="submit" name="quantity" value="{{ item.quantity+1 }}" class="btn btn-sm" style="background:#f0e0ea;width:32px;height:32px;padding:0;justify-content:center">+</button>
+        </form>
+      </td>
+      <td><strong>{{ (item.price * item.quantity)|round(2) }} جنيه</strong></td>
+      <td><a href="{{ url_for('remove_from_cart',cid=item.id) }}" style="color:#dc3545;font-size:1.3rem">🗑️</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start;">
+    <div>
+      <a href="{{ url_for('shop') }}" class="btn btn-outline btn-dark">← متابعة التسوق</a>
+    </div>
+    <div class="cart-total">
+      <h3>ملخص الطلب</h3>
+      <div class="total-row"><span>المجموع الفرعي</span><span>{{ total }} جنيه</span></div>
+      <div class="total-row"><span>الشحن</span><span style="color:var(--success)">مجاني 🎁</span></div>
+      <div class="total-row total-final"><span>الإجمالي</span><span>{{ total }} جنيه</span></div>
+      <a href="{{ url_for('checkout') }}" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1rem">إتمام الشراء ←</a>
+    </div>
+  </div>
+
+{% else %}
+  <div class="empty-state">
+    <div class="icon">🛒</div>
+    <h3>السلة فارغة</h3>
+    <p>أضيفي منتجات للسلة وابدأي التسوق</p>
+    <a href="{{ url_for('shop') }}" class="btn btn-primary">تسوقي الآن 🛍️</a>
+  </div>
+{% endif %}
+</div>
+{% endblock %}

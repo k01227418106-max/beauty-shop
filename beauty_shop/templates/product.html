@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - GlamStore{% endblock %}
+{% block content %}
+<div style="padding:1rem 2rem;background:#fff;border-bottom:1px solid var(--border)">
+  <a href="{{ url_for('shop') }}">المتجر</a> ← <a href="{{ url_for('shop',category=product.category_id) }}">{{ product.cat_name }}</a> ← {{ product.name }}
+</div>
+
+<div class="product-detail" style="max-width:1200px;margin:0 auto;">
+  <div class="product-gallery">
+    {% if product.image and product.image != 'default.jpg' %}
+      <img src="{{ url_for('static',filename='uploads/'+product.image) }}" alt="{{ product.name }}">
+    {% else %}
+      <div style="font-size:10rem;text-align:center">
+        {% if product.category_id==1 %}💄{% elif product.category_id==2 %}👜{% elif product.category_id==3 %}✨{% else %}🌸{% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="product-info">
+    <div class="product-cat" style="font-size:1rem;margin-bottom:.5rem">{{ product.cat_name }}</div>
+    <h1>{{ product.name }}</h1>
+    {% if product.is_new %}<span class="badge badge-new" style="position:static;display:inline-block;margin-bottom:1rem">جديد</span>{% endif %}
+
+    <div class="price-row">
+      <span class="price">{{ product.price }} جنيه</span>
+      {% if product.old_price %}
+        <span class="old-price">{{ product.old_price }} جنيه</span>
+        <span style="background:#fce4f0;color:var(--pink);padding:.2rem .8rem;border-radius:20px;font-size:.85rem;font-weight:700">
+          وفري {{ (product.old_price - product.price)|int }} جنيه
+        </span>
+      {% endif %}
+    </div>
+
+    {% if product.stock > 0 %}
+      <span class="stock-badge in-stock">✅ متوفر ({{ product.stock }} قطعة)</span>
+    {% else %}
+      <span class="stock-badge out-stock">❌ غير متوفر</span>
+    {% endif %}
+
+    <p class="product-desc">{{ product.description or 'منتج فاخر عالي الجودة.' }}</p>
+
+    {% if session.user_id and product.stock > 0 %}
+    <form action="{{ url_for('add_to_cart',pid=product.id) }}" method="post">
+      <div class="qty-wrap">
+        <label style="font-weight:700">الكمية:</label>
+        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="qty-input">
+      </div>
+      <div class="action-btns">
+        <button type="submit" class="btn btn-primary">🛒 أضف للسلة</button>
+        <a href="{{ url_for('toggle_wishlist',pid=product.id) }}" class="btn" style="background:{% if in_wishlist %}var(--pink){% else %}#fff{% endif %};color:{% if in_wishlist %}#fff{% else %}var(--pink){% endif %};border:2px solid var(--pink)">
+          ❤️ {% if in_wishlist %}محفوظة{% else %}المفضلة{% endif %}
+        </a>
+      </div>
+    </form>
+    {% elif not session.user_id %}
+    <a href="{{ url_for('login') }}" class="btn btn-primary" style="margin-top:1rem">سجلي الدخول للشراء</a>
+    {% endif %}
+
+    <div style="margin-top:2rem;padding:1.5rem;background:#fdf6fa;border-radius:16px;">
+      <div style="display:flex;gap:2rem;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.9rem"><span>🚚</span> توصيل سريع</div>
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.9rem"><span>✅</span> منتج أصلي</div>
+        <div style="display:flex;align-items:center;gap:.5rem;font-size:.9rem"><span>↩️</span> إرجاع خلال 14 يوم</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Related -->
+{% if related %}
+<section class="section" style="max-width:1200px;margin:0 auto;">
+  <div class="section-title"><h2>منتجات <span>مشابهة</span></h2></div>
+  <div class="products-grid">
+    {% for p in related %}
+    <div class="product-card">
+      <a href="{{ url_for('product',pid=p.id) }}">
+        <div class="product-img">
+          {% if p.image and p.image != 'default.jpg' %}
+            <img src="{{ url_for('static',filename='uploads/'+p.image) }}" alt="{{ p.name }}">
+          {% else %}
+            <div style="font-size:5rem;display:flex;align-items:center;justify-content:center;height:100%">
+              {% if p.category_id==1 %}💄{% elif p.category_id==2 %}👜{% elif p.category_id==3 %}✨{% else %}🌸{% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </a>
+      <div class="product-body">
+        <div class="product-name">{{ p.name }}</div>
+        <div class="price-row"><span class="price">{{ p.price }} جنيه</span></div>
+        <a href="{{ url_for('product',pid=p.id) }}" class="btn btn-primary btn-sm" style="width:100%;justify-content:center">عرض المنتج</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

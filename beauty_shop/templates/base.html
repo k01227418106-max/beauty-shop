@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Glam Store - متجر الجمال{% endblock %}</title>
+<meta name="description" content="أفضل متجر لمستحضرات التجميل والشنط الفاخرة في مصر">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💄</text></svg>">
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="{{ url_for('index') }}" class="nav-logo">💄 <span>Glam</span>Store</a>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}" {% if request.endpoint=='index' %}class="active"{% endif %}>الرئيسية</a>
+      <a href="{{ url_for('shop') }}" {% if request.endpoint=='shop' %}class="active"{% endif %}>المتجر</a>
+      <a href="{{ url_for('shop',category=1) }}">تجميل 💄</a>
+      <a href="{{ url_for('shop',category=2) }}">شنط 👜</a>
+      {% if session.user_id %}
+        <a href="{{ url_for('cart') }}">🛒 السلة <span class="cart-badge">{{ cart_count }}</span></a>
+        <a href="{{ url_for('wishlist') }}">❤️</a>
+        {% if session.is_admin %}
+          <a href="{{ url_for('admin_dashboard') }}" class="nav-btn btn">لوحة التحكم</a>
+        {% else %}
+          <a href="{{ url_for('profile') }}">👤 {{ session.user_name }}</a>
+          <a href="{{ url_for('logout') }}">خروج</a>
+        {% endif %}
+      {% else %}
+        <a href="{{ url_for('login') }}">دخول</a>
+        <a href="{{ url_for('register') }}" class="nav-btn btn">سجل الآن</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<div class="flash-messages">
+{% with msgs = get_flashed_messages(with_categories=true) %}
+{% for cat,msg in msgs %}
+<div class="alert alert-{{ cat }}" onclick="this.remove()">{{ msg }}</div>
+{% endfor %}
+{% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>💄 GlamStore</h4>
+      <p style="color:rgba(255,255,255,0.6);line-height:1.7">أفضل وجهة لمستحضرات التجميل والشنط الفاخرة. جودة عالية وأسعار تنافسية.</p>
+    </div>
+    <div class="footer-col">
+      <h4>روابط سريعة</h4>
+      <ul>
+        <li><a href="{{ url_for('index') }}">الرئيسية</a></li>
+        <li><a href="{{ url_for('shop') }}">المتجر</a></li>
+        <li><a href="{{ url_for('shop',category=1) }}">مستحضرات التجميل</a></li>
+        <li><a href="{{ url_for('shop',category=2) }}">الشنط والحقائب</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>حسابي</h4>
+      <ul>
+        <li><a href="{{ url_for('profile') }}">الملف الشخصي</a></li>
+        <li><a href="{{ url_for('orders') }}">طلباتي</a></li>
+        <li><a href="{{ url_for('wishlist') }}">المفضلة</a></li>
+        <li><a href="{{ url_for('cart') }}">السلة</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>تواصل معنا</h4>
+      <ul>
+        <li><a href="#">📞 01000000000</a></li>
+        <li><a href="#">📧 info@glamstore.com</a></li>
+        <li><a href="#">📍 القاهرة، مصر</a></li>
+        <li><a href="#">💬 واتساب</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© {{ current_year }} <span>GlamStore</span> — جميع الحقوق محفوظة ❤️</p>
+  </div>
+</footer>
+<script>
+setTimeout(()=>{document.querySelectorAll('.flash-messages .alert').forEach(a=>a.remove())},4000);
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

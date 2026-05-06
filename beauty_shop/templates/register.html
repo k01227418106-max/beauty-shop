@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}إنشاء حساب - GlamStore{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));padding:3rem 2rem;text-align:center;color:#fff">
+  <h1 style="font-size:2rem;font-weight:900">✨ انضمي لعيلة GlamStore</h1>
+  <p style="opacity:.8">سجلي واستمتعي بأفضل العروض والخصومات</p>
+</div>
+<div class="form-page" style="max-width:560px">
+  <div class="form-card">
+    <h2 style="margin-bottom:.5rem">إنشاء حساب جديد</h2>
+    <p class="form-subtitle">عندك حساب؟ <a href="{{ url_for('login') }}" style="color:var(--pink);font-weight:700">سجلي دخولك</a></p>
+    <form method="post">
+      <div class="form-group">
+        <label>الاسم الكامل *</label>
+        <input type="text" name="name" class="form-control" placeholder="اسمك هنا" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>البريد الإلكتروني *</label>
+          <input type="email" name="email" class="form-control" placeholder="example@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف</label>
+          <input type="tel" name="phone" class="form-control" placeholder="01xxxxxxxxx">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور *</label>
+        <input type="password" name="password" class="form-control" placeholder="8 أحرف على الأقل" required minlength="6">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;margin-top:.5rem">إنشاء الحساب 🎉</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

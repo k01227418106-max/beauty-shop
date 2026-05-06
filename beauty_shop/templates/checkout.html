@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}إتمام الشراء - GlamStore{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));padding:2rem;text-align:center;color:#fff">
+  <h1 style="font-size:2rem;font-weight:900">💳 إتمام الشراء</h1>
+</div>
+<div style="max-width:1000px;margin:2rem auto;padding:0 1rem;display:grid;grid-template-columns:1fr 380px;gap:2rem;">
+  <div>
+    <div class="admin-card">
+      <h2>📦 بيانات التوصيل</h2>
+      <form method="post">
+        <div class="form-group">
+          <label>العنوان الكامل *</label>
+          <textarea name="address" class="form-control" rows="3" required>{{ user.address or '' }}</textarea>
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف *</label>
+          <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}" required>
+        </div>
+        <div class="form-group">
+          <label>ملاحظات (اختياري)</label>
+          <textarea name="notes" class="form-control" rows="2" placeholder="أي تعليمات خاصة للتوصيل..."></textarea>
+        </div>
+        <div style="background:#fdf6fa;border-radius:14px;padding:1.2rem;margin-bottom:1.5rem">
+          <h4 style="margin-bottom:.8rem">💰 طريقة الدفع</h4>
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+            <input type="radio" name="payment" value="cod" checked> الدفع عند الاستلام (كاش)
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1.1rem">✅ تأكيد الطلب</button>
+      </form>
+    </div>
+  </div>
+  <div>
+    <div class="cart-total">
+      <h3>🧾 ملخص الطلب</h3>
+      {% for item in items %}
+      <div class="total-row" style="font-size:.9rem">
+        <span>{{ item.name }} × {{ item.quantity }}</span>
+        <span>{{ (item.price*item.quantity)|round(2) }} جنيه</span>
+      </div>
+      {% endfor %}
+      <div class="total-row" style="margin-top:1rem"><span>الشحن</span><span style="color:var(--success)">مجاني</span></div>
+      <div class="total-row total-final"><span>الإجمالي</span><span>{{ total }} جنيه</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

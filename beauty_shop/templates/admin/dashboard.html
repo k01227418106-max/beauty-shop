@@ -1,0 +1,67 @@
+{% extends 'admin/base.html' %}
+{% block title %}لوحة التحكم{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>📊 لوحة التحكم</h1>
+  <span style="color:var(--muted)">أهلاً، {{ session.user_name }} 👋</span>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📦</div>
+    <div class="stat-value">{{ stats.products }}</div>
+    <div class="stat-label">إجمالي المنتجات</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🛒</div>
+    <div class="stat-value">{{ stats.orders }}</div>
+    <div class="stat-label">إجمالي الطلبات</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">👥</div>
+    <div class="stat-value">{{ stats.users }}</div>
+    <div class="stat-label">العملاء</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">💰</div>
+    <div class="stat-value">{{ stats.revenue|int }}</div>
+    <div class="stat-label">الإيرادات (جنيه)</div>
+  </div>
+</div>
+
+<div class="admin-card">
+  <h2>🕐 آخر الطلبات</h2>
+  {% if recent_orders %}
+  <table class="data-table">
+    <thead><tr><th>#</th><th>العميل</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th><th>إجراء</th></tr></thead>
+    <tbody>
+    {% for o in recent_orders %}
+    <tr>
+      <td><strong>#{{ o.id }}</strong></td>
+      <td>{{ o.uname }}</td>
+      <td><strong style="color:var(--pink)">{{ o.total }} جنيه</strong></td>
+      <td><span class="status status-{{ o.status }}">{{ o.status }}</span></td>
+      <td>{{ o.created_at[:10] }}</td>
+      <td><a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-primary">عرض</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align:center;color:var(--muted);padding:2rem">لا توجد طلبات بعد</p>
+  {% endif %}
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+  <a href="{{ url_for('admin_products') }}" class="admin-card" style="text-align:center;cursor:pointer;text-decoration:none;color:inherit;transition:.3s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+    <div style="font-size:3rem;margin-bottom:.5rem">📦</div>
+    <h3>إدارة المنتجات</h3>
+    <p style="color:var(--muted)">إضافة وتعديل وحذف المنتجات</p>
+  </a>
+  <a href="{{ url_for('admin_orders') }}" class="admin-card" style="text-align:center;cursor:pointer;text-decoration:none;color:inherit;transition:.3s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+    <div style="font-size:3rem;margin-bottom:.5rem">🛒</div>
+    <h3>إدارة الطلبات</h3>
+    <p style="color:var(--muted)">عرض وتحديث حالة الطلبات</p>
+  </a>
+</div>
+{% endblock %}

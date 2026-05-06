@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}الملف الشخصي - GlamStore{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));padding:2rem;text-align:center;color:#fff">
+  <h1 style="font-size:2rem;font-weight:900">👤 ملفي الشخصي</h1>
+</div>
+<div style="max-width:700px;margin:2rem auto;padding:0 1rem;">
+  <div class="admin-card">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink2));display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1rem">👤</div>
+      <h2 style="font-size:1.5rem;font-weight:900">{{ user.name }}</h2>
+      <p style="color:var(--muted)">{{ user.email }}</p>
+      {% if user.is_admin %}<span class="badge" style="position:static;display:inline-block">أدمن</span>{% endif %}
+    </div>
+    <form method="post">
+      <div class="form-row">
+        <div class="form-group">
+          <label>الاسم</label>
+          <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف</label>
+          <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>العنوان</label>
+        <textarea name="address" class="form-control" rows="2">{{ user.address or '' }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">حفظ التغييرات ✅</button>
+    </form>
+    <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap">
+      <a href="{{ url_for('orders') }}" class="btn btn-dark btn-sm">📦 طلباتي</a>
+      <a href="{{ url_for('wishlist') }}" class="btn btn-dark btn-sm">❤️ المفضلة</a>
+      <a href="{{ url_for('cart') }}" class="btn btn-dark btn-sm">🛒 السلة</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-sm" style="background:#f8d7da;color:#721c24;">تسجيل الخروج</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

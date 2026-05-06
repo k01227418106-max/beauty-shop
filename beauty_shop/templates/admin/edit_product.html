@@ -1,0 +1,65 @@
+{% extends 'admin/base.html' %}
+{% block title %}تعديل منتج{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>✏️ تعديل المنتج</h1>
+  <a href="{{ url_for('admin_products') }}" class="btn btn-dark">← رجوع</a>
+</div>
+<div class="admin-card" style="max-width:700px">
+  <form method="post" enctype="multipart/form-data">
+    <div class="form-row">
+      <div class="form-group">
+        <label>اسم المنتج *</label>
+        <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+      </div>
+      <div class="form-group">
+        <label>الفئة *</label>
+        <select name="category_id" class="form-control" required>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if cat.id==product.category_id %}selected{% endif %}>{{ cat.name_ar }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>الوصف</label>
+      <textarea name="description" class="form-control" rows="3">{{ product.description or '' }}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>السعر الحالي *</label>
+        <input type="number" name="price" class="form-control" value="{{ product.price }}" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label>السعر القديم</label>
+        <input type="number" name="old_price" class="form-control" value="{{ product.old_price or '' }}" step="0.01">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>المخزون *</label>
+        <input type="number" name="stock" class="form-control" value="{{ product.stock }}" required>
+      </div>
+      <div class="form-group">
+        <label>صورة جديدة (اختياري)</label>
+        <input type="file" name="image" class="form-control" accept="image/*">
+        {% if product.image and product.image != 'default.jpg' %}
+        <small style="color:var(--muted)">الصورة الحالية: {{ product.image }}</small>
+        {% endif %}
+      </div>
+    </div>
+    <div style="display:flex;gap:1.5rem;margin-bottom:1.5rem">
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+        <input type="checkbox" name="is_featured" value="1" {% if product.is_featured %}checked{% endif %}> مميز ⭐
+      </label>
+      <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+        <input type="checkbox" name="is_new" value="1" {% if product.is_new %}checked{% endif %}> جديد 🆕
+      </label>
+    </div>
+    <div style="display:flex;gap:1rem">
+      <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center">حفظ التعديلات ✅</button>
+      <a href="{{ url_for('admin_products') }}" class="btn btn-dark">إلغاء</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

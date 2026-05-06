@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}لوحة التحكم{% endblock %} - GlamStore Admin</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-logo">💄 <span>Glam</span>Admin</div>
+    <ul class="admin-nav">
+      <li><a href="{{ url_for('admin_dashboard') }}" {% if request.endpoint=='admin_dashboard' %}class="active"{% endif %}>📊 الرئيسية</a></li>
+      <li><a href="{{ url_for('admin_products') }}" {% if 'product' in request.endpoint %}class="active"{% endif %}>📦 المنتجات</a></li>
+      <li><a href="{{ url_for('admin_orders') }}" {% if request.endpoint=='admin_orders' %}class="active"{% endif %}>🛒 الطلبات</a></li>
+      <li><a href="{{ url_for('admin_users') }}" {% if request.endpoint=='admin_users' %}class="active"{% endif %}>👥 العملاء</a></li>
+      <li><a href="{{ url_for('index') }}">🌐 المتجر</a></li>
+      <li><a href="{{ url_for('logout') }}" style="color:#ff6b6b!important">🚪 خروج</a></li>
+    </ul>
+  </aside>
+  <div class="admin-content">
+    <div class="flash-messages">
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat,msg in msgs %}
+    <div class="alert alert-{{ cat }}" onclick="this.remove()">{{ msg }}</div>
+    {% endfor %}
+    {% endwith %}
+    </div>
+    {% block content %}{% endblock %}
+  </div>
+</div>
+<script>setTimeout(()=>{document.querySelectorAll('.flash-messages .alert').forEach(a=>a.remove())},4000);</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

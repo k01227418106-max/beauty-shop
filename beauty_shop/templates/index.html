@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% block title %}GlamStore - الرئيسية{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>أجملي مع <span>GlamStore</span><br>كل يوم إطلالة جديدة ✨</h1>
+    <p>أفضل مستحضرات التجميل والشنط الفاخرة بأسعار لا تُقاوم</p>
+    <div class="hero-btns">
+      <a href="{{ url_for('shop') }}" class="btn btn-primary">🛍️ تسوقي الآن</a>
+      <a href="{{ url_for('shop',category=2) }}" class="btn btn-outline">👜 شوفي الشنط</a>
+    </div>
+    <div style="margin-top:3rem;display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;">
+      <div style="text-align:center;color:rgba(255,255,255,0.8)"><div style="font-size:2rem;font-weight:900;color:var(--pink)">500+</div><div>منتج متاح</div></div>
+      <div style="text-align:center;color:rgba(255,255,255,0.8)"><div style="font-size:2rem;font-weight:900;color:var(--pink)">1000+</div><div>عميلة سعيدة</div></div>
+      <div style="text-align:center;color:rgba(255,255,255,0.8)"><div style="font-size:2rem;font-weight:900;color:var(--pink)">100%</div><div>منتجات أصلية</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" style="background:#fff">
+  <div class="section-title">
+    <h2>تسوقي حسب <span>الفئة</span></h2>
+    <p>اختاري من تشكيلتنا الواسعة</p>
+  </div>
+  <div class="cats-grid" style="max-width:1200px;margin:0 auto;">
+    {% for cat in categories %}
+    <a href="{{ url_for('shop',category=cat.id) }}" class="cat-card">
+      <div class="cat-icon">{{ cat.icon }}</div>
+      <h3>{{ cat.name_ar }}</h3>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- FEATURED -->
+<section class="section">
+  <div class="section-title">
+    <h2>منتجات <span>مميزة</span></h2>
+    <p>الأكثر مبيعاً وطلباً</p>
+  </div>
+  <div class="products-grid" style="max-width:1200px;margin:0 auto;">
+    {% for p in featured %}
+    <div class="product-card">
+      <a href="{{ url_for('product',pid=p.id) }}">
+        <div class="product-img">
+          {% if p.image and p.image != 'default.jpg' %}
+            <img src="{{ url_for('static',filename='uploads/'+p.image) }}" alt="{{ p.name }}">
+          {% else %}
+            <div style="font-size:5rem;display:flex;align-items:center;justify-content:center;height:100%">
+              {% if p.category_id==1 %}💄{% elif p.category_id==2 %}👜{% elif p.category_id==3 %}✨{% else %}🌸{% endif %}
+            </div>
+          {% endif %}
+          {% if p.old_price %}<span class="badge">خصم</span>{% endif %}
+          {% if p.is_new %}<span class="badge badge-new" style="top:40px">جديد</span>{% endif %}
+        </div>
+      </a>
+      <div class="product-body">
+        <div class="product-cat">{{ p.cat_name }}</div>
+        <div class="product-name">{{ p.name }}</div>
+        <div class="price-row">
+          <span class="price">{{ p.price }} جنيه</span>
+          {% if p.old_price %}<span class="old-price">{{ p.old_price }} جنيه</span>{% endif %}
+        </div>
+        <div class="product-actions">
+          {% if session.user_id %}
+          <form action="{{ url_for('add_to_cart',pid=p.id) }}" method="post">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="btn btn-primary btn-sm">🛒 أضف للسلة</button>
+          </form>
+          <a href="{{ url_for('toggle_wishlist',pid=p.id) }}" class="wish-btn">❤️</a>
+          {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">🛒 أضف للسلة</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div style="text-align:center;margin-top:2rem">
+    <a href="{{ url_for('shop') }}" class="btn btn-primary">عرض كل المنتجات ←</a>
+  </div>
+</section>
+
+<!-- PROMO BANNER -->
+<section style="background:linear-gradient(135deg,#e91e8c,#ff6bb5);padding:4rem 2rem;text-align:center;color:#fff">
+  <h2 style="font-size:2.5rem;font-weight:900;margin-bottom:1rem">🎁 عروض حصرية لعضوات المتجر!</h2>
+  <p style="font-size:1.2rem;margin-bottom:2rem;opacity:.9">سجلي الآن واحصلي على أفضل العروض والخصومات أول بأول</p>
+  {% if not session.user_id %}
+  <a href="{{ url_for('register') }}" class="btn" style="background:#fff;color:var(--pink);font-size:1.1rem">سجلي الآن مجاناً 💄</a>
+  {% endif %}
+</section>
+
+<!-- NEW ARRIVALS -->
+<section class="section" style="background:#fff">
+  <div class="section-title">
+    <h2>وصل <span>جديد</span></h2>
+    <p>أحدث المنتجات المضافة</p>
+  </div>
+  <div class="products-grid" style="max-width:1200px;margin:0 auto;">
+    {% for p in new_products %}
+    <div class="product-card">
+      <a href="{{ url_for('product',pid=p.id) }}">
+        <div class="product-img">
+          {% if p.image and p.image != 'default.jpg' %}
+            <img src="{{ url_for('static',filename='uploads/'+p.image) }}" alt="{{ p.name }}">
+          {% else %}
+            <div style="font-size:5rem;display:flex;align-items:center;justify-content:center;height:100%">
+              {% if p.category_id==1 %}💄{% elif p.category_id==2 %}👜{% elif p.category_id==3 %}✨{% else %}🌸{% endif %}
+            </div>
+          {% endif %}
+          <span class="badge badge-new">جديد</span>
+        </div>
+      </a>
+      <div class="product-body">
+        <div class="product-cat">{{ p.cat_name }}</div>
+        <div class="product-name">{{ p.name }}</div>
+        <div class="price-row"><span class="price">{{ p.price }} جنيه</span></div>
+        <a href="{{ url_for('product',pid=p.id) }}" class="btn btn-dark btn-sm" style="width:100%;justify-content:center">عرض التفاصيل</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;">
+    {% for icon,title,desc in [('🚚','توصيل سريع','توصيل لكل محافظات مصر خلال 2-5 أيام'),('✅','منتجات أصلية','100% أصلية ومضمونة من أفضل الماركات'),('↩️','سياسة الإرجاع','ارجعي المنتج خلال 14 يوم بسهولة'),('💬','دعم 24/7','فريق خدمة العملاء جاهز دائماً لمساعدتك')] %}
+    <div class="cat-card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:1rem">{{ icon }}</div>
+      <h3 style="margin-bottom:.5rem">{{ title }}</h3>
+      <p style="color:var(--muted);font-size:.9rem">{{ desc }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

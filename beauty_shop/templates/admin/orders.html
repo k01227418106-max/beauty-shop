@@ -1,0 +1,50 @@
+{% extends 'admin/base.html' %}
+{% block title %}الطلبات{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>🛒 إدارة الطلبات</h1>
+  <span style="color:var(--muted)">{{ orders|length }} طلب</span>
+</div>
+<div class="admin-card">
+  {% if orders %}
+  <table class="data-table">
+    <thead><tr><th>#</th><th>العميل</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th><th>تغيير الحالة</th></tr></thead>
+    <tbody>
+    {% for o in orders %}
+    <tr>
+      <td><strong>#{{ o.id }}</strong></td>
+      <td>
+        <div><strong>{{ o.uname }}</strong></div>
+        <div style="font-size:.8rem;color:var(--muted)">{{ o.email }}</div>
+        {% if o.phone %}<div style="font-size:.8rem;color:var(--muted)">{{ o.phone }}</div>{% endif %}
+      </td>
+      <td><strong style="color:var(--pink)">{{ o.total }} جنيه</strong></td>
+      <td><span class="status status-{{ o.status }}">
+        {% if o.status=='pending' %}⏳ في الانتظار
+        {% elif o.status=='processing' %}⚙️ قيد المعالجة
+        {% elif o.status=='shipped' %}🚚 تم الشحن
+        {% elif o.status=='delivered' %}✅ تم التسليم
+        {% else %}❌ ملغي{% endif %}
+      </span></td>
+      <td>{{ o.created_at[:10] }}</td>
+      <td>
+        <form method="post" action="{{ url_for('update_order_status',oid=o.id) }}" style="display:flex;gap:.5rem">
+          <select name="status" class="sort-select" style="font-size:.85rem">
+            <option value="pending" {% if o.status=='pending' %}selected{% endif %}>في الانتظار</option>
+            <option value="processing" {% if o.status=='processing' %}selected{% endif %}>قيد المعالجة</option>
+            <option value="shipped" {% if o.status=='shipped' %}selected{% endif %}>تم الشحن</option>
+            <option value="delivered" {% if o.status=='delivered' %}selected{% endif %}>تم التسليم</option>
+            <option value="cancelled" {% if o.status=='cancelled' %}selected{% endif %}>ملغي</option>
+          </select>
+          <button type="submit" class="btn btn-primary btn-sm">✅</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state"><div class="icon">🛒</div><h3>لا توجد طلبات بعد</h3></div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'admin/base.html' %}
+{% block title %}العملاء{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>👥 إدارة العملاء</h1>
+  <span style="color:var(--muted)">{{ users|length }} مستخدم</span>
+</div>
+<div class="admin-card">
+  <table class="data-table">
+    <thead><tr><th>#</th><th>الاسم</th><th>البريد</th><th>الهاتف</th><th>النوع</th><th>تاريخ التسجيل</th></tr></thead>
+    <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.id }}</td>
+      <td><strong>{{ u.name }}</strong></td>
+      <td>{{ u.email }}</td>
+      <td>{{ u.phone or '—' }}</td>
+      <td>
+        {% if u.is_admin %}
+          <span class="badge" style="position:static;display:inline-block">أدمن</span>
+        {% else %}
+          <span style="background:#d4edda;color:#155724;padding:.2rem .7rem;border-radius:20px;font-size:.8rem;font-weight:700">عميل</span>
+        {% endif %}
+      </td>
+      <td>{{ u.created_at[:10] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}المفضلة - GlamStore{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));padding:2rem;text-align:center;color:#fff">
+  <h1 style="font-size:2rem;font-weight:900">❤️ قائمة المفضلة</h1>
+</div>
+<div style="max-width:1200px;margin:2rem auto;padding:0 1rem;">
+{% if items %}
+  <div class="products-grid">
+    {% for p in items %}
+    <div class="product-card">
+      <a href="{{ url_for('product',pid=p.id) }}">
+        <div class="product-img">
+          {% if p.image and p.image != 'default.jpg' %}
+            <img src="{{ url_for('static',filename='uploads/'+p.image) }}" alt="{{ p.name }}">
+          {% else %}
+            <div style="font-size:5rem;display:flex;align-items:center;justify-content:center;height:100%">
+              {% if p.category_id==1 %}💄{% elif p.category_id==2 %}👜{% elif p.category_id==3 %}✨{% else %}🌸{% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </a>
+      <div class="product-body">
+        <div class="product-name">{{ p.name }}</div>
+        <div class="price-row"><span class="price">{{ p.price }} جنيه</span></div>
+        <div class="product-actions">
+          <form action="{{ url_for('add_to_cart',pid=p.id) }}" method="post">
+            <input type="hidden" name="quantity" value="1">
+            <button class="btn btn-primary btn-sm">🛒 للسلة</button>
+          </form>
+          <a href="{{ url_for('toggle_wishlist',pid=p.id) }}" class="wish-btn" style="color:var(--pink)">❤️</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <div class="icon">❤️</div>
+    <h3>قائمة المفضلة فارغة</h3>
+    <p>أضيفي المنتجات التي تعجبك هنا</p>
+    <a href="{{ url_for('shop') }}" class="btn btn-primary">تصفحي المتجر</a>
+  </div>
+{% endif %}
+</div>
+{% endblock %}
